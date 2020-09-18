@@ -49,9 +49,9 @@ jobs:
         env:
           TERMINUS_MACHINE_TOKEN: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
 
-      - name: PHP parallel processing
+      - name: Bash parallel processing
         env:
           SITES: $(terminus org:site:list ${{ secrets.PURINA_DEMO_ORG_UUID }} --format list --upstream ${{ secrets.PURINA_DEMO_UPSTREAM_UUID }} --field name)
           NOTE: ${{ github.event.head_commit.message }}
         run: |
-          cd .github/scripts/php && php deploy.php
+          echo $SITES | parallel --verbose --eta -I% --max-args 1 .github/scripts/shell/deploy-sequence.sh %
