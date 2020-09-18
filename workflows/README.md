@@ -18,9 +18,11 @@ There are a few methods that we went through that can be used to provide improve
 
 For example, your Macbook Pro will have 8 cores with 8 available processing threads, while the Github Actions build container has 2 vCPUs and only 1 available job thread - which means even if you had some type of parallel tool, you could only run one task at a time in the build container, but you could utilize your local to expedite the tasks.
 
+We attempted a number of approaches, largely all of them fell into the same issue of "How do we manage multiple jobs that can run asynchronously?", and that's where most of them fell short.
+
 
 ### Python Wrapper
-<insert info>
+Python has some native capabilities for implementing processing pools and multithreading (though Python isn't really good at this). There was also the attempt to use some kind message queue, and use [Celery](https://github.com/celery/celery) as the processing interface, but once again we're bound to the machine limitations.
 
 ### PHP Process Manager
 <insert>
