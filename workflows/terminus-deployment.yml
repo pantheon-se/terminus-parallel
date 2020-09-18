@@ -39,7 +39,7 @@ jobs:
         run: |
           cd .github/scripts/php && composer --no-interaction --no-progress --prefer-dist install
 
-      - name: Terminus Alias
+      - name: Create Terminus alias
         run: |
           echo "::add-path::.github/scripts/php/vendor/bin"
 
@@ -52,6 +52,6 @@ jobs:
       - name: Bash parallel processing
         env:
           SITES: $(terminus org:site:list ${{ secrets.PURINA_DEMO_ORG_UUID }} --format list --upstream ${{ secrets.PURINA_DEMO_UPSTREAM_UUID }} --field name)
-          NOTE: ${{ github.event.head_commit.message }}
+          NOTE: $(git log -1 --pretty=%B)
         run: |
-          echo $SITES | parallel --verbose --eta -I% --max-args 1 .github/scripts/shell/deploy-sequence.sh %
+          echo $SITES | parallel --verbose --eta --max-args 1 .github/scripts/shell/debug.sh

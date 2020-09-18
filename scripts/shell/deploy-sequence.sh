@@ -18,4 +18,4 @@ terminus drush "${1}.dev" -- updb -y
 terminus env:clear-cache "${1}.dev"
 
 # Deploy code to test
-terminus env:deploy ${1}.test --cc --updatedb --note ''
+terminus env:deploy ${1}.test --cc --updatedb --note $NOTE

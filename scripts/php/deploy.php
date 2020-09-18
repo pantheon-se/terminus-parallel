@@ -38,8 +38,6 @@ function terminus_deploy($site_name, $env = 'test')
   return implode(";", $sequence_list);
 }
 
-die(terminus_deploy('purina-demo-1'));
-
 try {
   // Set path to binary
   $parallel->initBinary(exec('which parallel'));
