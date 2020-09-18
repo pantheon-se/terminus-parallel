@@ -1,0 +1,57 @@
+name: Terminus Deployment (PHP)
+on:
+  push:
+    branches: [parallel/php-parallel]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_CONTEXT: ${{ toJson(github) }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          cd .github/scripts/php && echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache Composer Downloads
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Cache PHP dependencies
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/composer.lock') }}
+
+      - name: Installing PHP
+        uses: shivammathur/setup-php@2.4.2
+        with:
+          php-version: '7.4'
+          coverage: none
+
+      - name: Install composer dependencies
+        run: |
+          cd .github/scripts/php && composer --no-interaction --no-progress --prefer-dist install
+
+      - name: Terminus Alias
+        run: |
+          sudo ln -s .github/scripts/php/vendor/bin/terminus /usr/bin/terminus; which terminus
+
+      - name: Authenticate Terminus
+        run: |
+          terminus auth:login --machine-token=${TERMINUS_MACHINE_TOKEN}
+        env:
+          TERMINUS_MACHINE_TOKEN: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
+
+      - name: PHP parallel processing
+        env:
+          SITES: $(terminus org:site:list ${{ secrets.PURINA_DEMO_ORG_UUID }} --format list --upstream ${{ secrets.PURINA_DEMO_UPSTREAM_UUID }})
+          NOTE: ${{ github.event.head_commit.message }}
+        run: |
+          php .github/scripts/php/deploy.php

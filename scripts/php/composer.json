@@ -1,0 +1,15 @@
+{
+    "name": "kyletaylored/terminus-parallel",
+    "description": "Enabling Terminus commands in parallel",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kyle Taylor",
+            "email": "kyle.taylor@pantheon.io"
+        }
+    ],
+    "require": {
+        "geopal-solutions/gnu-parallel-wrapper": "dev-master",
+        "pantheon-systems/terminus": "^2.4"
+    }
+}
