@@ -10,10 +10,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Installing PHP
+        uses: shivammathur/setup-php@2.4.2
+        with:
+          php-version: '7.4'
+          coverage: none
+
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
-          cd .github/scripts/php && echo "::set-output name=dir::$(composer config cache-files-dir)"
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: Cache Composer Downloads
         uses: actions/cache@v1
@@ -26,14 +32,8 @@ jobs:
       - name: Cache PHP dependencies
         uses: actions/cache@v1
         with:
-          path: vendor
+          path: .github/scripts/php/vendor
           key: ${{ runner.OS }}-build-${{ hashFiles('**/composer.lock') }}
-
-      - name: Installing PHP
-        uses: shivammathur/setup-php@2.4.2
-        with:
-          php-version: '7.4'
-          coverage: none
 
       - name: Install composer dependencies
         run: |
@@ -41,7 +41,7 @@ jobs:
 
       - name: Terminus Alias
         run: |
-          sudo ln -s .github/scripts/php/vendor/bin/terminus /usr/bin/terminus; which terminus
+          echo "::add-path::.github/scripts/php/vendor/bin"
 
       - name: Authenticate Terminus
         run: |
