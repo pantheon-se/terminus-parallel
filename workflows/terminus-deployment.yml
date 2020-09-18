@@ -1,7 +1,7 @@
-name: Terminus Deployment (PHP)
+name: Terminus Deployment (Shell)
 on:
   push:
-    branches: [parallel/php-parallel]
+    branches: [master]
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -15,6 +15,12 @@ jobs:
         with:
           php-version: '7.4'
           coverage: none
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2.0.3
+        with:
+          key: ${{ secrets.TERMINUS_SSH_KEY }}
+          known_hosts: drush.in
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -49,9 +55,9 @@ jobs:
         env:
           TERMINUS_MACHINE_TOKEN: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
 
-      - name: Bash parallel processing
-        env:
-          SITES: $(terminus org:site:list ${{ secrets.PURINA_DEMO_ORG_UUID }} --format list --upstream ${{ secrets.PURINA_DEMO_UPSTREAM_UUID }} --field name)
-          NOTE: $(git log -1 --pretty=%B)
+      - name: Shell jericho processing
         run: |
-          echo $SITES | parallel --verbose --eta --max-args 1 .github/scripts/shell/debug.sh
+          .github/scripts/shell/deploy-and.sh
+        env:
+          ORG_ID: ${{ secrets.PURINA_DEMO_ORG_UUID }}
+          UPS_ID: ${{ secrets.PURINA_DEMO_UPSTREAM_UUID }}

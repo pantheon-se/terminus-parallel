@@ -9,7 +9,6 @@
         }
     ],
     "require": {
-        "geopal-solutions/gnu-parallel-wrapper": "dev-master",
         "pantheon-systems/terminus": "^2.4"
     }
 }

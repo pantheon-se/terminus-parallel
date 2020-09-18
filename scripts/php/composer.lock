@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f6ba107ebbb626fb2076d9ad914ea6a",
+    "content-hash": "46fb32110a57c6b6b62df79e5aad29cf",
     "packages": [
         {
             "name": "composer/semver",
@@ -842,49 +842,6 @@
             ],
             "description": "implementation of xdg base directory specification for php",
             "time": "2014-10-24T07:27:01+00:00"
-        },
-        {
-            "name": "geopal-solutions/gnu-parallel-wrapper",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/geopal-solutions/gnu-parallel-wrapper.git",
-                "reference": "f9fe2e0dfd79a6a70532f6644adf68818bf8ff06"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/geopal-solutions/gnu-parallel-wrapper/zipball/f9fe2e0dfd79a6a70532f6644adf68818bf8ff06",
-                "reference": "f9fe2e0dfd79a6a70532f6644adf68818bf8ff06",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "3.7.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Parallel": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Gabor Zelei",
-                    "email": "gabor.zelei@geopal-solutions.com"
-                }
-            ],
-            "description": "A wrapper library for the GNU Parallel binary",
-            "keywords": [
-                "GNU Parallel",
-                "parallel"
-            ],
-            "time": "2014-02-28T10:26:03+00:00"
         },
         {
             "name": "grasmash/expander",
@@ -2965,9 +2922,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "geopal-solutions/gnu-parallel-wrapper": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
