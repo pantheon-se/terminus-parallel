@@ -28,7 +28,12 @@ Python has some native capabilities for implementing processing pools and multit
 <insert>
 
 ### GNU Parallel
-<insert>
+> GNU parallel is a shell tool for executing jobs in parallel using one or more computers. A job can be a single command or a small script that has to be run for each of the lines in the input. The typical input is a list of files, a list of hosts, a list of users, a list of URLs, or a list of tables. A job can also be a command that reads from a pipe. GNU parallel can then split the input and pipe it into commands in parallel.
+
+We used GNU parallel to split each set of terminus steps to speed up builds for customers who have large portfolio of Pantheon sites. The sample set (Org) we used this on was a portfolio of 300 sites on Pantheon that needed to (1) check for an upstream update, (2) make sure the Git mode was enabled, and (3) apply the upstream updates; flush caches; be avaiable for other commands like create backups in an asyncronous manner. All of this needed to be reliable, so the parlor trick of a trailing ampersand in a bash command was not suitable. Hence our adoption of GNU parallel.
+
+There is no Terminus plugin or wrapper because GNU parallel should not be (A) exectuted by PHP itself, and (B) multiple terminus commands may need some manipulation of the dataset (Site Names, Org ID's, etc.). The best fit was have GNU parallel trigger a bash script that outlined all the Terminus steps each site should receive. This allows us to change the steps bash script and leave the GNU parallel action in Github alone and generic enough to scale at the Terminus list of commands level and not the GH Action. This will allow us to copy the recipe over and over per customer and not be complex for their customizations.
+
 
 ### Shell-based, OS managed processes
 <insert>
