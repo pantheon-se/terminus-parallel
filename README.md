@@ -39,6 +39,15 @@ There is no Terminus plugin or wrapper because GNU parallel should not be (A) ex
  - https://www.gnu.org/software/parallel/parallel_tutorial.html
 
 
+```
+- name: Bash parallel processing
+  run: |
+    $(terminus org:site:list ${ORG_ID} --format list --upstream ${UPS_ID} --field name) | parallel --verbose --eta .github/scripts/shell/debug.sh
+  env:
+    ORG_ID: ${{ secrets.PURINA_DEMO_ORG_UUID }}
+    UPS_ID: ${{ secrets.PURINA_DEMO_UPSTREAM_UUID }}
+```
+
 ### Shell-based, OS managed processes
 <insert>
 
