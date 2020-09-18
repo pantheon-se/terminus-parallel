@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Usage
+# ./deploy-sequence.sh <site-name or uuid>
+
 # Exit on error
 set -e
 
