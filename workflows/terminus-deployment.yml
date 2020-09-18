@@ -19,7 +19,7 @@ jobs:
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
+          echo "::set-output name=dir::$(cd .github/scripts/php && composer config cache-files-dir)"
 
       - name: Cache Composer Downloads
         uses: actions/cache@v1
@@ -51,7 +51,7 @@ jobs:
 
       - name: PHP parallel processing
         env:
-          SITES: $(terminus org:site:list ${{ secrets.PURINA_DEMO_ORG_UUID }} --format list --upstream ${{ secrets.PURINA_DEMO_UPSTREAM_UUID }})
+          SITES: $(terminus org:site:list ${{ secrets.PURINA_DEMO_ORG_UUID }} --format list --upstream ${{ secrets.PURINA_DEMO_UPSTREAM_UUID }} --field name)
           NOTE: ${{ github.event.head_commit.message }}
         run: |
-          php .github/scripts/php/deploy.php
+          cd .github/scripts/php && php deploy.php
