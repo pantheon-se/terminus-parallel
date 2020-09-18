@@ -34,6 +34,10 @@ We used GNU parallel to split each set of terminus steps to speed up builds for 
 
 There is no Terminus plugin or wrapper because GNU parallel should not be (A) exectuted by PHP itself, and (B) multiple terminus commands may need some manipulation of the dataset (Site Names, Org ID's, etc.). The best fit was have GNU parallel trigger a bash script that outlined all the Terminus steps each site should receive. This allows us to change the steps bash script and leave the GNU parallel action in Github alone and generic enough to scale at the Terminus list of commands level and not the GH Action. This will allow us to copy the recipe over and over per customer and not be complex for their customizations.
 
+#### Reference Links
+ - https://opensource.com/article/18/5/gnu-parallel
+ - https://www.gnu.org/software/parallel/parallel_tutorial.html
+
 
 ### Shell-based, OS managed processes
 <insert>
