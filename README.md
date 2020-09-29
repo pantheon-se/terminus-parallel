@@ -31,7 +31,7 @@ Create a number of concurrent processes, on a specific time interval, that run i
 3. Utilize the ampersand at the end of the shell execution (`./deploy.sh site-name-1 &`) to create a background task
 4. Depending on the process completion time, tasks will finish before creating too many new tasks.
 
-![async](/Users/kyletaylor/Downloads/async.gif)
+![async](https://i.imgur.com/hBbA9u9.gif)
 
 While this model implements a predictable minimum runtime, the major consideration is to not overload the system with too many background jobs which will increase the actual job time. For example, if we have 300 sites to deploy, we can estimate that with a 6 second delay, the minimum processing time will be 30 minutes (300 sites x 6 seconds = 30 min). But because there are a number of tasks embedded in the deployment sequence, a single task could take anywhere from 4 minutes to 10 minutes if competing for the same processor time. See the example code below for how to implement background jobs:
 
@@ -69,7 +69,7 @@ Allocating a set number of concurrent workers to run processes out of a job queu
 3. Each worker will take a task out of the queue and initiate a process.
 4. When the processing is a complete, the worker will pick up a new task until no more tasks are in the queue.
 
-![parallel](/Users/kyletaylor/Downloads/parallel.gif)
+![parallel](https://i.imgur.com/P6nWj26.gif)
 
 The goal with either approach is to have multiple processes running concurrently in the background. The parallel processing method is simpler and the available workers can be dynamically expanded based on the environment but can overwhelm Terminus when initiatiting background calls, while the interval queue is static but requires more tuning based on how long jobs take.
 
@@ -77,7 +77,7 @@ The goal with either approach is to have multiple processes running concurrently
 
 Using GitHub Actions, we're able to create a build process that will utilize a Pull Request workflow, and on successful merge to `master`, will initiate the build sequence that will fetch all sites using this custom upstream, then start a parallel process that will initiate a deploy sequence for each site.
 
-![parallel-workflow](/Users/kyletaylor/Downloads/parallel-workflow.jpeg)
+![parallel-workflow](https://i.imgur.com/V6ajlO8.jpg)
 
 The magic function here is using GNU Parallel to manage the process handling. Essentially, we bundle the entire deployment sequence into a single script that takes a site ID as an argument. In this script, you can implement additional error handling (for example, as restoring a backup if we don't see an `exit 0`), but this simplistisc example does not.
 
