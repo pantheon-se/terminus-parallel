@@ -44,8 +44,8 @@ try {
   $results = file('/tmp/results.txt');
 
   if ($results !== FALSE) {
-    // Initialize Markdown table
-    $note = getenv('NOTE');
+    // Initialize blocks
+    $note = trim(getenv('NOTE'));
     $blocks = [
       [
         "type" => "section",
@@ -57,7 +57,11 @@ try {
       ['type' => 'divider']
     ];
 
-    // Add rows to markdown table
+    $batches = [];
+    $batch_counter = 0;
+    $result_counter = 1;
+
+    // Add sections to blocks
     foreach ($results as $result) {
       $site = explode(',', $result);
       // Make some vars
@@ -85,27 +89,16 @@ try {
         ]
       ];
 
+      // Run in batches of 26
+      if ($result_counter % 26 == 0) {
+        $batch_counter++;
+      }
+
       // Add section to block list
-      $blocks[] = $section;
+      $batches[$batch_counter][] = $section;
 
-
-      // {
-      //   "type": "section",
-      //   "text": {
-      //     "type": "mrkdwn",
-      //     "text": ":sushi: *Ace Wasabi Rock-n-Roll Sushi Bar*\nThe best landlocked sushi restaurant."
-      //   },
-      //   "accessory": {
-      //     "type": "button",
-      //     "text": {
-      //       "type": "plain_text",
-      //       "emoji": true,
-      //       "text": "Vote"
-      //     },
-      //     "value": "click_me_123"
-      //   }
-      // },
-
+      // Increment result counter
+      $result_counter++;
     }
 
     // Initiate Slack
@@ -113,11 +106,17 @@ try {
     $data = [
       'username' => 'Github Actions',
       'icon_emoji' => ':crystal_ball:',
-      'blocks' => $blocks,
     ];
 
-    // Send request
-    curl_url($url, $data);
+    // Send updates in batches
+    foreach ($batches as $batch_id => $batch_data) {
+      $data['blocks'] = $batch_data;
+      print(json_encode($data, JSON_PRETTY_PRINT));
+
+      // Send request
+      curl_url($url, $data);
+      sleep(2);
+    }
   }
 } catch (Exception $e) {
   echo $e->getMessage();

@@ -1,10 +1,10 @@
-name: Terminus Deployment (Shell)
+name: Self Runner - Parallel - Terminus Deployment
 on:
   push:
-    branches: [deploy-demo]
+    branches: [parallel-php]
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, pantheon, local]
     env:
       GITHUB_CONTEXT: ${{ toJson(github) }}
     steps:
@@ -15,12 +15,6 @@ jobs:
         with:
           php-version: '7.4'
           coverage: none
-
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2.0.3
-        with:
-          key: ${{ secrets.TERMINUS_SSH_KEY }}
-          known_hosts: drush.in
 
       - name: Get Composer Cache Directory
         id: composer-cache
@@ -45,9 +39,10 @@ jobs:
         run: |
           cd .github/scripts/php && composer --no-interaction --no-progress --prefer-dist install
 
-      - name: Create Terminus alias
+      - name: Create Terminus alias, add Note
         run: |
           echo "::add-path::.github/scripts/php/vendor/bin"
+          echo "::set-env name=NOTE::$(git log -1 --pretty=tformat:'%s')"
 
       - name: Authenticate Terminus
         run: |
@@ -55,15 +50,9 @@ jobs:
         env:
           TERMINUS_MACHINE_TOKEN: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
 
-      - name: Shell jericho processing
+      - name: Parallel Processing
         run: |
-          .github/scripts/shell/deploy-and.sh
+          terminus org:site:list ${ORG_UUID} --format list --upstream ${UPSTREAM_UUID} --field name | sort -V | parallel --jobs 150 .github/scripts/shell/deploy-sequence.sh {}
         env:
-          ORG_ID: ${{ secrets.ORG_UUID }}
-          UPS_ID: ${{ secrets.UPSTREAM_UUID }}
-
-      - name: Send Slack update
-        run: php .github/scripts/php/slack.php
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          NOTE: $(git log -1 --pretty=tformat:"%s")
+          ORG_UUID: ${{ secrets.ORG_UUID }}
+          UPSTREAM_UUID: ${{ secrets.UPSTREAM_UUID }}

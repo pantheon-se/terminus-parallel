@@ -42,7 +42,7 @@ function sequence() {
 # MAIN SCRIPT THREAD
 
 # Save sites to temp CSV
-terminus org:site:list ${ORG_ID} --format csv --upstream ${UPS_ID} --fields name,id | sort -V > /tmp/sites.csv
+terminus org:site:list ${ORG_UUID} --format csv --upstream ${UPSTREAM_UUID} --fields name,id | sort -V > /tmp/sites.csv
 
 # Extract note
 # Current unused as Terminus does not accept the notes well. Will require more formatting research.

@@ -1,0 +1,69 @@
+name: Bash Async - Terminus Deployment
+on:
+  push:
+    branches: [deploy-demo]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_CONTEXT: ${{ toJson(github) }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Installing PHP
+        uses: shivammathur/setup-php@2.4.2
+        with:
+          php-version: '7.4'
+          coverage: none
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2.0.3
+        with:
+          key: ${{ secrets.TERMINUS_SSH_KEY }}
+          known_hosts: drush.in
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(cd .github/scripts/php && composer config cache-files-dir)"
+
+      - name: Cache Composer Downloads
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Cache PHP dependencies
+        uses: actions/cache@v1
+        with:
+          path: .github/scripts/php/vendor
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/composer.lock') }}
+
+      - name: Install composer dependencies
+        run: |
+          cd .github/scripts/php && composer --no-interaction --no-progress --prefer-dist install
+
+      - name: Create Terminus alias, add Note
+        run: |
+          echo "::add-path::.github/scripts/php/vendor/bin"
+          echo "::set-env name=NOTE::$(git log -1 --pretty=tformat:'%s')"
+
+      - name: Authenticate Terminus
+        run: |
+          terminus auth:login --machine-token=${TERMINUS_MACHINE_TOKEN}
+        env:
+          TERMINUS_MACHINE_TOKEN: ${{ secrets.TERMINUS_MACHINE_TOKEN }}
+
+      - name: Shell jericho processing
+        run: |
+          .github/scripts/shell/deploy-and.sh
+        env:
+          ORG_UUID: ${{ secrets.ORG_UUID }}
+          UPSTREAM_UUID: ${{ secrets.UPSTREAM_UUID }}
+
+      - name: Send Slack update
+        run: php .github/scripts/php/slack.php
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
