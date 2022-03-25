@@ -47,8 +47,8 @@ jobs:
 
       - name: Create Terminus alias, add Note
         run: |
-          echo "::add-path::.github/scripts/php/vendor/bin"
-          echo "::set-env name=NOTE::$(git log -1 --pretty=tformat:'%s')"
+          echo ".github/scripts/php/vendor/bin" >> $GITHUB_PATH
+          echo "NOTE=$(git log -1 --pretty=tformat:'%s')" >> $GITHUB_ENV
 
       - name: Authenticate Terminus
         run: |
@@ -58,7 +58,7 @@ jobs:
 
       - name: Parallel Processing
         run: |
-          terminus org:site:list ${ORG_UUID} --format list --upstream ${UPSTREAM_UUID} --field name | sort -V | parallel --jobs 100 .github/scripts/shell/timeout-deploy.sh {}
+          terminus org:site:list ${ORG_UUID} --format list --upstream ${UPSTREAM_UUID} --field name | sort -V | parallel --jobs 20 .github/scripts/shell/timeout-deploy.sh {}
         env:
           ORG_UUID: ${{ secrets.ORG_UUID }}
           UPSTREAM_UUID: ${{ secrets.UPSTREAM_UUID }}
