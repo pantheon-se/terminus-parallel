@@ -62,7 +62,7 @@ done
 
 ### Parallel processes
 
-A Parralel Process solution allows us to allocate a set number of concurrent workers to run tasks out of a job queue. For example:
+A Parallel Process solution allows us to allocate a set number of concurrent workers to run tasks out of a job queue. For example:
 
 1. Create a list of tasks in a queue.
 2. Define the number of available workers.
